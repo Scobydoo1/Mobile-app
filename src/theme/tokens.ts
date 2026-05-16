@@ -1,50 +1,68 @@
 /**
  * Design tokens for MicroHabit AI.
- * Locked to the supplied mockup — every magic number here is observable in the design.
+ * Locked to the supplied Claude Design mockup (microhabit.jsx). Every magic
+ * number here maps to something observable in the source design file.
  */
 
 export const Colors = {
   // Surfaces
-  canvas: '#F5F7FB',
-  canvasTint: '#EEF2F8',
+  canvas: '#FBFAFE',
+  canvasTint: '#F5F3FA',
   white: '#FFFFFF',
+  glass: 'rgba(255,255,255,0.62)',
+  glassEdge: 'rgba(255,255,255,0.95)',
 
-  // Ink (text)
-  ink900: '#0B0D12',
-  ink700: '#1A1D23',
-  ink500: '#5A6172',
-  ink400: '#8A92A3',
-  ink300: '#B6BCC9',
-  ink200: '#D9DEE7',
+  // Ink (text) — alpha-ramped over near-black like the source
+  ink900: '#15151B',
+  ink700: 'rgba(21,21,27,0.78)',
+  ink500: 'rgba(21,21,27,0.62)',
+  ink400: 'rgba(21,21,27,0.50)',
+  ink300: 'rgba(21,21,27,0.38)',
+  ink200: 'rgba(21,21,27,0.16)',
+  ink100: 'rgba(21,21,27,0.08)',
+  ink050: 'rgba(21,21,27,0.05)',
 
-  // Brand
+  // Brand violet (AI accent, "Why now", active tab)
   brandPurple: '#7C3AED',
-  brandPurpleSoft: '#EDE6FF',
+  brandPurpleDeep: '#5B21B6',
+  brandPurpleSoft: 'rgba(124,58,237,0.10)',
+  brandPurpleSofter: 'rgba(124,58,237,0.05)',
   brandPurpleGlow: '#C4B5FD',
+  brandPurpleEdge: 'rgba(124,58,237,0.18)',
 
-  // Accents
-  mint: '#10B981',
-  mintGlow: '#34D399',
-  mintDeep: '#059669',
+  // Glow stops (cascaded per "palette" tweak)
+  glowVioletA: '#A78BFA',
+  glowVioletB: '#60A5FA',
+  glowMintA: '#86EFAC',
+  glowMintB: '#60A5FA',
+  glowPeachA: '#FDBA74',
+  glowPeachB: '#F0ABFC',
+
+  // Emerald "Done" gradient
+  emeraldFrom: '#34D399',
+  emeraldTo: '#059669',
+
+  // Slate "Snooze" gradient
+  slateFrom: 'rgba(255,255,255,0.85)',
+  slateTo: 'rgba(241,243,250,0.85)',
+
+  // Sky for the time chip glow
   sky: '#3B82F6',
   skySoft: '#DBEAFE',
 
-  // Glass card gradient stops (Live Context)
-  glassFrom: '#E4F4F1',
-  glassMid: '#E8ECF8',
-  glassTo: '#F0EAFB',
-
-  // Shadow
-  shadowSoft: 'rgba(11, 13, 18, 0.06)',
-  shadowGlow: 'rgba(124, 58, 237, 0.18)',
+  // Streak flame
+  flameFrom: '#FB923C',
+  flameTo: '#EA580C',
 } as const;
 
 export const Radii = {
   pill: 999,
-  card: 28,
-  cardInner: 20,
+  card: 32,
+  cardSm: 28,
+  cardXs: 22,
   chip: 14,
-  iconTile: 14,
+  iconTile: 12,
+  button: 18,
 } as const;
 
 export const Spacing = {
@@ -52,58 +70,76 @@ export const Spacing = {
   xs: 4,
   sm: 8,
   md: 12,
-  lg: 16,
-  xl: 20,
-  '2xl': 24,
-  '3xl': 32,
+  lg: 14,
+  xl: 18,
+  '2xl': 22,
+  '3xl': 28,
   '4xl': 40,
 } as const;
 
 export const Type = {
-  // Top date label
-  date: { size: 13, weight: '600' as const, tracking: 1.6, color: Colors.ink400 },
-  // "Welcome back, Alex."
-  hero: { size: 34, weight: '800' as const, tracking: -0.5, color: Colors.ink900 },
-  // "Your moment is now."
-  subHero: { size: 19, weight: '400' as const, color: Colors.ink500 },
-  // Card eyebrow ("LIVE CONTEXT", "YOUR PERSONAL NUDGE")
-  eyebrow: { size: 12, weight: '600' as const, tracking: 1.6, color: Colors.ink400 },
-  // "YOU ARE HOME"
-  displayBold: { size: 28, weight: '900' as const, tracking: -0.3, color: Colors.ink900 },
-  // Nudge title "Read 5 pages of your book."
-  title: { size: 22, weight: '700' as const, color: Colors.ink900 },
-  // Chips
-  chip: { size: 13, weight: '500' as const, color: Colors.ink700 },
-  // Why now body
-  bodyMd: { size: 15, weight: '400' as const, color: Colors.ink700 },
-  // Buttons
+  date: { size: 12, weight: '600' as const, tracking: 1.2, color: Colors.ink300 },
+  hero: { size: 28, weight: '700' as const, tracking: -0.8, color: Colors.ink900 },
+  subHero: { size: 17, weight: '400' as const, tracking: -0.2, color: Colors.ink500 },
+  eyebrow: { size: 11, weight: '600' as const, tracking: 1.4, color: Colors.ink300 },
+  displayBold: { size: 26, weight: '700' as const, tracking: -0.6, color: Colors.ink900 },
+  cardLabel: { size: 12, weight: '600' as const, tracking: 0.2, color: Colors.ink500 },
+  title: { size: 22, weight: '600' as const, tracking: -0.4, color: Colors.ink900 },
+  chip: { size: 13, weight: '600' as const, color: Colors.ink900 },
+  metaChip: { size: 11, weight: '500' as const, color: Colors.ink500 },
+  bodyMd: { size: 13, weight: '400' as const, color: Colors.ink500 },
   buttonLg: { size: 16, weight: '600' as const, color: Colors.white },
-  // Tab labels
-  tab: { size: 12, weight: '500' as const },
+  buttonMd: { size: 15, weight: '600' as const, color: Colors.ink900 },
+  tab: { size: 11, weight: '500' as const },
 } as const;
 
 export const Shadows = {
   card: {
-    shadowColor: '#0B0D12',
-    shadowOffset: { width: 0, height: 8 },
+    shadowColor: '#3C2890',
+    shadowOffset: { width: 0, height: 18 },
+    shadowOpacity: 0.18,
+    shadowRadius: 40,
+    elevation: 6,
+  },
+  cardSoft: {
+    shadowColor: '#14142C',
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.06,
-    shadowRadius: 24,
-    elevation: 4,
+    shadowRadius: 12,
+    elevation: 3,
   },
   glow: {
     shadowColor: Colors.brandPurple,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.25,
-    shadowRadius: 28,
+    shadowRadius: 24,
     elevation: 8,
   },
-  buttonGreen: {
-    shadowColor: Colors.mint,
+  buttonEmerald: {
+    shadowColor: '#059669',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.35,
+    shadowOpacity: 0.45,
     shadowRadius: 18,
     elevation: 6,
   },
+  buttonSlate: {
+    shadowColor: '#14143C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 2,
+  },
 } as const;
 
+/**
+ * Glow palette presets (selectable via the "Tweaks" panel in the design).
+ * Each entry is the two-stop radial gradient used by the backdrop + context card.
+ */
+export const GlowPalettes = {
+  violet: [Colors.glowVioletA, Colors.glowVioletB] as const,
+  mint: [Colors.glowMintA, Colors.glowMintB] as const,
+  peach: [Colors.glowPeachA, Colors.glowPeachB] as const,
+} as const;
+
+export type GlowPalette = keyof typeof GlowPalettes;
 export type ColorToken = keyof typeof Colors;

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MicroHabit AI — concept</title>
+  <style>
+    html, body { margin: 0; padding: 0; background: #F5F3FA; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    #root { width: 100vw; height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="ios-frame.jsx"></script>
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="microhabit.jsx"></script>
+  <script type="text/babel" src="microhabit-modules.jsx"></script>
+
+  <script type="text/babel" data-presets="react">
+    const TWEAKS = /*EDITMODE-BEGIN*/{
+      "glowPalette": "mint",
+      "showPattern": true,
+      "tone": "warm"
+    }/*EDITMODE-END*/;
+
+    function App() {
+      const [tweaks, setTweak] = window.useTweaks(TWEAKS);
+
+      return (
+        <window.DesignCanvas>
+          <window.DCSection id="habits" title="1 · Habits tab" subtitle="Dynamic dashboard — the moment-by-moment nudge surface">
+            <window.DCArtboard id="home" label="A · Home · Evening read" width={402} height={874}>
+              <window.IOSDevice width={402} height={874}>
+                <window.MHScreenA palette={tweaks.glowPalette} pattern={tweaks.showPattern} tone={tweaks.tone} />
+              </window.IOSDevice>
+            </window.DCArtboard>
+            <window.DCArtboard id="leaving" label="B · Leaving the office" width={402} height={874}>
+              <window.IOSDevice width={402} height={874}>
+                <window.MHScreenB palette={tweaks.glowPalette} pattern={tweaks.showPattern} tone={tweaks.tone} />
+              </window.IOSDevice>
+            </window.DCArtboard>
+            <window.DCArtboard id="done" label="C · Just completed" width={402} height={874}>
+              <window.IOSDevice width={402} height={874}>
+                <window.MHScreenC palette={tweaks.glowPalette} pattern={tweaks.showPattern} tone={tweaks.tone} />
+              </window.IOSDevice>
+            </window.DCArtboard>
+            <window.DCArtboard id="empty" label="D · All caught up" width={402} height={874}>
+              <window.IOSDevice width={402} height={874}>
+                <window.MHScreenEmpty palette={tweaks.glowPalette} pattern={tweaks.showPattern} />
+              </window.IOSDevice>
+            </window.DCArtboard>
+          </window.DCSection>
+
+          <window.DCSection id="architecture" title="2 · Habit architecture" subtitle="Library + contextual habit creator">
+            <window.DCArtboard id="library" label="E · Habit library" width={402} height={874}>
+              <window.IOSDevice width={402} height={874}>
+                <window.MHScreenLibrary palette={tweaks.glowPalette} pattern={tweaks.showPattern} />
+              </window.IOSDevice>
+            </window.DCArtboard>
+            <window.DCArtboard id="create" label="F · New habit · context rules" width={402} height={874}>
+              <window.IOSDevice width={402} height={874}>
+                <window.MHScreenCreate palette={tweaks.glowPalette} pattern={tweaks.showPattern} />
+              </window.IOSDevice>
+            </window.DCArtboard>
+          </window.DCSection>
+
+          <window.DCSection id="metrics" title="3 · Progress &amp; Insights" subtitle="Streaks, contribution grid, context heatmap">
+            <window.DCArtboard id="progress" label="G · Progress" width={402} height={874}>
+              <window.IOSDevice width={402} height={874}>
+                <window.MHScreenProgress palette={tweaks.glowPalette} pattern={tweaks.showPattern} />
+              </window.IOSDevice>
+            </window.DCArtboard>
+            <window.DCArtboard id="insights" label="H · Insights · context heatmap" width={402} height={874}>
+              <window.IOSDevice width={402} height={874}>
+                <window.MHScreenInsights palette={tweaks.glowPalette} pattern={tweaks.showPattern} />
+              </window.IOSDevice>
+            </window.DCArtboard>
+          </window.DCSection>
+
+          <window.DCSection id="system" title="4 · System &amp; settings" subtitle="Geofence tuning, local-first data controls">
+            <window.DCArtboard id="settings" label="I · Settings" width={402} height={874}>
+              <window.IOSDevice width={402} height={874}>
+                <window.MHScreenSettings palette={tweaks.glowPalette} pattern={tweaks.showPattern} />
+              </window.IOSDevice>
+            </window.DCArtboard>
+            <window.DCArtboard id="map" label="J · Geofence pin-drop" width={402} height={874}>
+              <window.IOSDevice width={402} height={874}>
+                <window.MHScreenMap palette={tweaks.glowPalette} pattern={tweaks.showPattern} />
+              </window.IOSDevice>
+            </window.DCArtboard>
+          </window.DCSection>
+
+          {window.TweaksPanel && (
+            <window.TweaksPanel title="Tweaks">
+              <window.TweakSection label="Look">
+                <window.TweakRadio
+                  label="Glow"
+                  value={tweaks.glowPalette}
+                  onChange={(v) => setTweak('glowPalette', v)}
+                  options={[
+                    { value: 'violet', label: 'Violet' },
+                    { value: 'mint',   label: 'Mint' },
+                    { value: 'peach',  label: 'Peach' },
+                  ]}
+                />
+                <window.TweakToggle
+                  label="Pattern"
+                  value={tweaks.showPattern}
+                  onChange={(v) => setTweak('showPattern', v)}
+                />
+              </window.TweakSection>
+              <window.TweakSection label="Voice">
+                <window.TweakRadio
+                  label="Tone"
+                  value={tweaks.tone}
+                  onChange={(v) => setTweak('tone', v)}
+                  options={[
+                    { value: 'warm', label: 'Warm' },
+                    { value: 'crisp', label: 'Crisp' },
+                  ]}
+                />
+              </window.TweakSection>
+            </window.TweaksPanel>
+          )}
+        </window.DesignCanvas>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

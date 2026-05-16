@@ -1,21 +1,20 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Colors, Type } from '../theme/tokens';
+import { StyleSheet, Text, View } from 'react-native';
+import { Type } from '../theme/tokens';
 import { formatHeaderDate } from '../utils/dates';
 import { useAppContext } from '../context/AppContextProvider';
 
 interface DateHeaderProps {
   userName?: string;
+  tagline?: string;
 }
 
 /**
- * Top of the dashboard.
- *
  *   SATURDAY · MAY 16
  *   Welcome back, Alex.
  *   Your moment is now.
  */
-export function DateHeader({ userName = 'Alex' }: DateHeaderProps) {
+export function DateHeader({ userName = 'Alex', tagline = 'Your moment is now.' }: DateHeaderProps) {
   const { currentContext } = useAppContext();
   const date = formatHeaderDate(currentContext.rawTime);
 
@@ -25,38 +24,36 @@ export function DateHeader({ userName = 'Alex' }: DateHeaderProps) {
         {date}
       </Text>
       <Text style={styles.hero}>Welcome back, {userName}.</Text>
-      <Text style={styles.sub}>Your moment is now.</Text>
+      <Text style={styles.sub}>{tagline}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrap: {
-    paddingHorizontal: 24,
+    paddingHorizontal: 22,
     paddingTop: 8,
-    paddingBottom: 20,
+    paddingBottom: 18,
   },
   date: {
     fontSize: Type.date.size,
     fontWeight: Type.date.weight,
     letterSpacing: Type.date.tracking,
     color: Type.date.color,
-    marginBottom: 14,
+    marginBottom: 6,
   },
   hero: {
     fontSize: Type.hero.size,
     fontWeight: Type.hero.weight,
     letterSpacing: Type.hero.tracking,
     color: Type.hero.color,
-    lineHeight: 38,
+    lineHeight: 32,
   },
   sub: {
     fontSize: Type.subHero.size,
     fontWeight: Type.subHero.weight,
+    letterSpacing: Type.subHero.tracking,
     color: Type.subHero.color,
     marginTop: 4,
   },
 });
-
-// Silence the lint by re-exporting Colors usage (it's via Type tokens)
-void Colors;

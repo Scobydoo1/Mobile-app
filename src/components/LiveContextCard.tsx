@@ -1,91 +1,137 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Colors, Radii, Shadows, Type } from '../theme/tokens';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
+import { Colors, GlowPalette, GlowPalettes, Radii, Type } from '../theme/tokens';
+import { GlassCard } from './GlassCard';
 import { PinIcon, ClockIcon } from './icons';
 import { useAppContext } from '../context/AppContextProvider';
 
+interface LiveContextCardProps {
+  palette?: GlowPalette;
+}
+
 /**
- * Glassmorphic "LIVE CONTEXT" card.
+ * Glassmorphic "Live Context" card.
  *
- * Layout (per mockup):
  *   ┌──────────────────────────────────────────────┐
- *   │  LIVE CONTEXT                  [📍 Home   ]  │
- *   │  YOU ARE HOME                  [🕒 6:15 PM]  │
+ *   │  LIVE CONTEXT          [📍 Home          ]   │
+ *   │  YOU ARE HOME          [🕒 6:15 PM       ]   │
  *   └──────────────────────────────────────────────┘
  *
- * Gradient: pale mint → pale lavender (left → right). Rounded 28pt.
+ * Internal radial glow softly pulses; chips show location + clock with their
+ * own colored glow bead.
  */
-export function LiveContextCard() {
+export function LiveContextCard({ palette = 'violet' }: LiveContextCardProps) {
   const { currentContext } = useAppContext();
-  const isHome = currentContext.location === 'Home';
-  const headline = isHome ? 'YOU ARE HOME' : currentContext.location === 'On the Move' ? "YOU'RE ON THE MOVE" : 'CONTEXT UNKNOWN';
+  const [glowA, glowB] = GlowPalettes[palette];
+
+  const headline =
+    currentContext.location === 'Home'
+      ? 'YOU ARE HOME'
+      : currentContext.location === 'On the Move'
+        ? "YOU'RE ON THE MOVE"
+        : 'CONTEXT UNKNOWN';
+
+  const pulse = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, { toValue: 1, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(pulse, { toValue: 0, duration: 2000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [pulse]);
+  const glowOpacity = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.7, 1] });
 
   return (
-    <View style={styles.outer}>
-      <LinearGradient
-        colors={[Colors.glassFrom, Colors.glassMid, Colors.glassTo]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.card}
+    <GlassCard radius={Radii.card} style={styles.outer}>
+      <View style={styles.body}>
+        <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, { opacity: glowOpacity }]}>
+          <Svg width="100%" height="100%" viewBox="0 0 300 160" preserveAspectRatio="xMidYMid slice">
+            <Defs>
+              <RadialGradient id="ctxglow" cx="50%" cy="50%" r="60%">
+                <Stop offset="0%" stopColor={glowA} stopOpacity="0.30" />
+                <Stop offset="40%" stopColor={glowB} stopOpacity="0.14" />
+                <Stop offset="70%" stopColor={glowB} stopOpacity="0" />
+              </RadialGradient>
+            </Defs>
+            <Circle cx="150" cy="80" r="160" fill="url(#ctxglow)" />
+          </Svg>
+        </Animated.View>
+
+        <View style={styles.row}>
+          <View style={styles.left}>
+            <Text style={styles.eyebrow}>LIVE CONTEXT</Text>
+            <Text style={styles.headline}>{headline}</Text>
+          </View>
+
+          <View style={styles.right}>
+            <Chip
+              icon={<PinIcon size={11} color="#FFFFFF" />}
+              label={currentContext.location}
+              glow={Colors.glowVioletA}
+            />
+            <Chip
+              icon={<ClockIcon size={11} color="#FFFFFF" />}
+              label={currentContext.timeString}
+              glow={Colors.glowVioletB}
+            />
+          </View>
+        </View>
+      </View>
+    </GlassCard>
+  );
+}
+
+interface ChipProps {
+  icon: React.ReactNode;
+  label: string;
+  glow: string;
+}
+
+function Chip({ icon, label, glow }: ChipProps) {
+  return (
+    <View style={styles.chip}>
+      <View
+        style={[
+          styles.chipBead,
+          {
+            backgroundColor: glow,
+            shadowColor: glow,
+          },
+        ]}
       >
-        <View style={styles.left}>
-          <Text style={styles.eyebrow}>LIVE CONTEXT</Text>
-          <Text style={styles.headline}>{headline}</Text>
-        </View>
-
-        <View style={styles.right}>
-          <View style={styles.chip}>
-            <View style={[styles.chipIconBubble, { backgroundColor: Colors.brandPurpleSoft }]}>
-              <PinIcon size={14} color={Colors.brandPurple} />
-            </View>
-            <Text style={styles.chipText}>{currentContext.location}</Text>
-          </View>
-
-          <View style={styles.chip}>
-            <View style={[styles.chipIconBubble, { backgroundColor: Colors.skySoft }]}>
-              <ClockIcon size={14} color={Colors.sky} />
-            </View>
-            <Text style={styles.chipText}>{currentContext.timeString}</Text>
-          </View>
-        </View>
-      </LinearGradient>
+        {icon}
+      </View>
+      <Text style={styles.chipText}>{label}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   outer: {
-    marginHorizontal: 20,
-    borderRadius: Radii.card,
-    ...Shadows.card,
-    backgroundColor: 'transparent',
+    marginHorizontal: 18,
   },
-  card: {
+  body: {
+    padding: 22,
+    overflow: 'hidden',
+  },
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 22,
-    paddingVertical: 26,
-    borderRadius: Radii.card,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.55)',
-    minHeight: 150,
+    gap: 12,
   },
-  left: {
-    flex: 1,
-    paddingRight: 12,
-  },
-  right: {
-    gap: 10,
-    alignItems: 'flex-end',
-  },
+  left: { flex: 1, paddingRight: 12 },
+  right: { alignItems: 'flex-end', gap: 8 },
   eyebrow: {
     fontSize: Type.eyebrow.size,
     fontWeight: Type.eyebrow.weight,
     letterSpacing: Type.eyebrow.tracking,
     color: Type.eyebrow.color,
-    marginBottom: 14,
+    marginBottom: 8,
   },
   headline: {
     fontSize: Type.displayBold.size,
@@ -97,23 +143,31 @@ const styles = StyleSheet.create({
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.85)',
-    borderRadius: Radii.pill,
+    gap: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    gap: 8,
-    minWidth: 108,
+    borderRadius: Radii.pill,
+    backgroundColor: 'rgba(255,255,255,0.75)',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: Colors.glassEdge,
   },
-  chipIconBubble: {
+  chipBead: {
     width: 22,
     height: 22,
     borderRadius: 11,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.55,
+    shadowRadius: 6,
+    elevation: 2,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.9)',
   },
   chipText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: Colors.ink900,
+    fontSize: Type.chip.size,
+    fontWeight: Type.chip.weight,
+    color: Type.chip.color,
+    letterSpacing: -0.1,
   },
 });
