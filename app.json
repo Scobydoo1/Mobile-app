@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "MicroHabit AI",
+    "slug": "microhabit-ai",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "microhabit",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F5F7FB"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.microhabit.ai",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "MicroHabit uses your location to surface habit nudges that match the place you are in (e.g., 'You are home').",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "MicroHabit uses your location in the background to nudge you at the right place, even when the app is closed.",
+        "UIBackgroundModes": ["location", "fetch"]
+      }
+    },
+    "android": {
+      "package": "com.microhabit.ai",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#F5F7FB"
+      },
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "POST_NOTIFICATIONS",
+        "RECEIVE_BOOT_COMPLETED",
+        "WAKE_LOCK"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow MicroHabit to use your location to recognise the place you are in."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#7C3AED"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
